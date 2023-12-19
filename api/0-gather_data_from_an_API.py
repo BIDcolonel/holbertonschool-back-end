@@ -4,6 +4,7 @@
 import requests
 import sys
 
+
 if len(sys.argv) != 2:
     print("Usage: python script.py <employee_id>")
     sys.exit(1)
@@ -33,9 +34,21 @@ todos = todos_response.json()
 total_tasks = len(todos)
 completed_tasks = [todo for todo in todos if todo["completed"]]
 
-print(
-    f"Employee {employee_name} is done with tasks"
-    f"({len(completed_tasks)}/{total_tasks}):"
-)
-for task in completed_tasks:
-    print(f"\t{task['title']}")
+# Output file name based on employee ID
+output_filename = f"employee_{employee_id}_output.txt"
+
+with open(output_filename, 'w') as output_file:
+    output_file.write(
+        f"Employee {employee_name} is done with tasks"
+        f"({len(completed_tasks)}/{total_tasks}):\n"
+    )
+    for task in completed_tasks:
+        output_file.write(f"\t{task['title']}\n")
+
+    # Output to console
+    print(
+        f"Employee {employee_name} is done with tasks"
+        f"({len(completed_tasks)}/{total_tasks}):"
+    )
+    for task in completed_tasks:
+        print(f"\t{task['title']}")
