@@ -22,22 +22,21 @@ def check_tasks(id):
         f"Employee {employee_name} is done with tasks"
         f"({len(completed_tasks)}/{total_tasks}):\n"
     )
-    print(output_str)
 
-    for task in completed_tasks:
-        task_str = f"\t {task['title']}"
-        print(task_str)
-
-    output_filename = 'student_output'
-    with open(output_filename, 'w') as output_file:
+    with open('student_output', 'w') as output_file:
+        output_file.write(output_str)
         count = 0
         for task in completed_tasks:
             count += 1
             task_str = f"\t {task['title']}\n"
-            if task_str[0] == '\t' and task_str[-1] == '\n':
+            if task_str.startswith('\t ') and task_str.endswith('\n'):
                 output_file.write(f"Task {count} Formatting: OK\n")
             else:
                 output_file.write(f"Task {count} Formatting: Incorrect\n")
+
+    print(output_str)
+    for task in completed_tasks:
+        print(f"\t {task['title']}")
 
 
 if __name__ == "__main__":
