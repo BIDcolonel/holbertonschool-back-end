@@ -22,14 +22,14 @@ employee_data = response.json()
 employee_name = employee_data["name"]
 
 # Make a GET request to the API to get the employee's TODO list
-response = requests.get(
+todos_response = requests.get(
     f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
 
-if response.status_code != 200:
+if todos_response.status_code != 200:
     print("Error: Failed to fetch TODO list")
     sys.exit(1)
 
-todos = response.json()
+todos = todos_response.json()
 total_tasks = len(todos)
 completed_tasks = [todo for todo in todos if todo["completed"]]
 
