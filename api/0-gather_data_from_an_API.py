@@ -35,7 +35,7 @@ total_tasks = len(todos)
 completed_tasks = [todo for todo in todos if todo["completed"]]
 
 # Output file name based on employee ID
-output_filename = f"employee_{employee_id}_output.txt"
+output_filename = f"employee_output.txt"
 
 with open(output_filename, 'w') as output_file:
     output_file.write(
