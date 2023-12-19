@@ -5,50 +5,40 @@ import requests
 import sys
 
 
-if len(sys.argv) != 2:
-    print("Usage: python script.py <employee_id>")
-    sys.exit(1)
+users_url = "https://jsonplaceholder.typicode.com/users"
+todos_url = "https://jsonplaceholder.typicode.com/todos"
 
-employee_id = sys.argv[1]
 
-# Make a GET request to the API
-response = requests.get(
-    f"https://jsonplaceholder.typicode.com/users/{employee_id}")
+def check_tasks(id):
+    """ Fetch user name, number of tasks """
+    user_resp = requests.get(f"{users_url}/{id}").json()
+    employee_name = user_resp['name']
 
-if response.status_code != 200:
-    print("Error: Employee not found")
-    sys.exit(1)
+    todos_resp = requests.get(f"{todos_url}?userId={id}").json()
+    total_tasks = len(todos_resp)
+    completed_tasks = [task for task in todos_resp if task['completed']]
 
-employee_data = response.json()
-employee_name = employee_data["name"]
-
-# Make a GET request to the API to get the employee's TODO list
-todos_response = requests.get(
-    f"https://jsonplaceholder.typicode.com/todos?userId={employee_id}")
-
-if todos_response.status_code != 200:
-    print("Error: Failed to fetch TODO list")
-    sys.exit(1)
-
-todos = todos_response.json()
-total_tasks = len(todos)
-completed_tasks = [todo for todo in todos if todo["completed"]]
-
-# Output file name based on employee ID
-output_filename = f"employee_output.txt"
-
-with open(output_filename, 'w') as output_file:
-    output_file.write(
+    output_str = (
         f"Employee {employee_name} is done with tasks"
         f"({len(completed_tasks)}/{total_tasks}):\n"
     )
-    for task in completed_tasks:
-        output_file.write(f"\t{task['title']}\n")
+    print(output_str)
 
-    # Output to console
-    print(
-        f"Employee {employee_name} is done with tasks"
-        f"({len(completed_tasks)}/{total_tasks}):"
-    )
     for task in completed_tasks:
-        print(f"\t{task['title']}")
+        task_str = f"\t {task['title']}"
+        print(task_str)
+
+    output_filename = 'student_output'
+    with open(output_filename, 'w') as output_file:
+        count = 0
+        for task in completed_tasks:
+            count += 1
+            task_str = f"\t {task['title']}\n"
+            if task_str[0] == '\t' and task_str[-1] == '\n':
+                output_file.write(f"Task {count} Formatting: OK\n")
+            else:
+                output_file.write(f"Task {count} Formatting: Incorrect\n")
+
+
+if __name__ == "__main__":
+    check_tasks(int(sys.argv[1]))
