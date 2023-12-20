@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Script that display infos for a given employee"""
 
+import csv
 import requests
 import sys
-import csv
 
 API_URL = 'https://jsonplaceholder.typicode.com'
 
@@ -25,19 +25,7 @@ def get_completed_tasks(todo_list_data):
     return completed_tasks
 
 
-def export_to_csv(user_id, user_data, completed_tasks):
-    file_name = f"{user_id}.csv"
-    with open(file_name, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS",
-                         "TASK_TITLE"])
-        for task in completed_tasks:
-            writer.writerow([user_id, user_data["username"],
-                             str(task["completed"]), task["title"]])
-    print(f"Exported data to {file_name}")
-
-
-def display_employee_info(user_data, completed_tasks, total_tasks):
+def display_employee_info(user_data, completed_tasks, total_tasks, user_id):
     user_name = user_data["name"]
     len_completed_tasks = len(completed_tasks)
 
@@ -46,8 +34,16 @@ def display_employee_info(user_data, completed_tasks, total_tasks):
         len_completed_tasks,
         total_tasks))
 
-    for task in completed_tasks:
-        print(f"\t {task['title']}")
+    filename = f"user_{user_id}_tasks.csv"
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['Task Title'])
+
+        for task in completed_tasks:
+            writer.writerow([task['title']])
+            print(f"\t {task['title']}")
+
+    print(f"Task details exported to {filename}")
 
 
 if __name__ == '__main__':
@@ -62,5 +58,4 @@ if __name__ == '__main__':
     completed_tasks = get_completed_tasks(todo_list)
     total_tasks = len(todo_list)
 
-    display_employee_info(user_info, completed_tasks, total_tasks)
-    export_to_csv(user_id, user_info, completed_tasks)
+    display_employee_info(user_info, completed_tasks, total_tasks, user_id)
