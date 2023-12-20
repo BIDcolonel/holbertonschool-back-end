@@ -29,9 +29,11 @@ def export_to_csv(user_id, user_data, completed_tasks):
     file_name = f"{user_id}.csv"
     with open(file_name, mode='w', newline='') as file:
         writer = csv.writer(file)
-        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS", "TASK_TITLE"])
+        writer.writerow(["USER_ID", "USERNAME", "TASK_COMPLETED_STATUS",
+                         "TASK_TITLE"])
         for task in completed_tasks:
-            writer.writerow([user_id, user_data["username"], str(task["completed"]), task["title"]])
+            writer.writerow([user_id, user_data["username"],
+                             str(task["completed"]), task["title"]])
     print(f"Exported data to {file_name}")
 
 
