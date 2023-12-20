@@ -5,39 +5,49 @@ import requests
 import sys
 
 
-users_url = "https://jsonplaceholder.typicode.com/users"
-todos_url = "https://jsonplaceholder.typicode.com/todos"
+API_URL = 'https://jsonplaceholder.typicode.com'
 
 
-def check_tasks(id):
-    """ Fetch user name, number of tasks """
-    user_resp = requests.get(f"{users_url}/{id}").json()
-    employee_name = user_resp['name']
+def get_user_info(user_id):
+    user_request = requests.get(f'{API_URL}/users/{user_id}')
+    user_data = user_request.json()
+    return user_data
 
-    todos_resp = requests.get(f"{todos_url}?userId={id}").json()
-    total_tasks = len(todos_resp)
-    completed_tasks = [task for task in todos_resp if task['completed']]
 
-    output_str = (
-        f"Employee {employee_name} is done with tasks"
-        f"({len(completed_tasks)}/{total_tasks}):\n"
-    )
+def get_todo_list(user_id):
+    todo_list_request = requests.get(f"{API_URL}/todos?userId={user_id}")
+    todo_list_data = todo_list_request.json()
+    return todo_list_data
 
-    with open('student_output', 'w') as output_file:
-        output_file.write(output_str)
-        count = 0
-        for task in completed_tasks:
-            count += 1
-            task_str = f"\t {task['title']}\n"
-            if task_str.startswith('\t ') and task_str.endswith('\n'):
-                output_file.write(f"Task {count} Formatting: OK\n")
-            else:
-                output_file.write(f"Task {count} Formatting: Incorrect\n")
 
-    print(output_str)
+def get_completed_tasks(todo_list_data):
+    completed_tasks = [task for task in todo_list_data if task['completed']]
+    return completed_tasks
+
+
+def display_employee_info(user_data, completed_tasks, total_tasks):
+    user_name = user_data["name"]
+    len_completed_tasks = len(completed_tasks)
+
+    print("Employee {} is done with tasks({}/{}):".format(
+        user_name,
+        len_completed_tasks,
+        total_tasks))
+
     for task in completed_tasks:
         print(f"\t {task['title']}")
 
 
-if __name__ == "__main__":
-    check_tasks(int(sys.argv[1]))
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        print("Usage: python script.py <user_id>")
+        sys.exit(1)
+
+    user_id = sys.argv[1]
+
+    user_info = get_user_info(user_id)
+    todo_list = get_todo_list(user_id)
+    completed_tasks = get_completed_tasks(todo_list)
+    total_tasks = len(todo_list)
+
+    display_employee_info(user_info, completed_tasks, total_tasks)
