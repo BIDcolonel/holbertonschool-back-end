@@ -5,6 +5,7 @@ import csv
 import requests
 import sys
 
+
 API_URL = 'https://jsonplaceholder.typicode.com'
 
 
@@ -25,7 +26,7 @@ def get_completed_tasks(todo_list_data):
     return completed_tasks
 
 
-def display_employee_info(user_data, completed_tasks, total_tasks, user_id):
+def display_employee_info(user_data, completed_tasks, total_tasks):
     user_name = user_data["name"]
     len_completed_tasks = len(completed_tasks)
 
@@ -34,16 +35,23 @@ def display_employee_info(user_data, completed_tasks, total_tasks, user_id):
         len_completed_tasks,
         total_tasks))
 
-    filename = f"user_{user_id}_tasks.csv"
-    with open(filename, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow(['Task Title'])
+    for task in completed_tasks:
+        print(f"\t {task['title']}")
+
+
+def export_to_csv(user_data, completed_tasks, filename):
+    with open(filename, mode='w') as csv_file:
+        csv_writer = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
+        csv_writer.writerow(['User ID', 'User Name',
+                             'Completed', 'Task Title'])
 
         for task in completed_tasks:
-            writer.writerow([task['title']])
-            print(f"\t {task['title']}")
-
-    print(f"Task details exported to {filename}")
+            csv_writer.writerow([
+                user_data['id'],
+                user_data['name'],
+                task['completed'],
+                task['title']
+            ])
 
 
 if __name__ == '__main__':
@@ -58,4 +66,8 @@ if __name__ == '__main__':
     completed_tasks = get_completed_tasks(todo_list)
     total_tasks = len(todo_list)
 
-    display_employee_info(user_info, completed_tasks, total_tasks, user_id)
+    display_employee_info(user_info, completed_tasks, total_tasks)
+
+    csv_filename = f"{user_id}.csv"
+    export_to_csv(user_info, completed_tasks, csv_filename)
+    print(f"Data has been exported to {csv_filename}")
